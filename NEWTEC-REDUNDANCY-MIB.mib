@@ -1,0 +1,139 @@
+NEWTEC-REDUNDANCY-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-IDENTITY,
+    OBJECT-TYPE
+        FROM SNMPv2-SMI
+
+    MODULE-COMPLIANCE,
+    OBJECT-GROUP
+        FROM SNMPv2-CONF
+    
+    NtcEnable
+        FROM NEWTEC-TC-MIB
+
+    ntcFunction
+        FROM NEWTEC-MAIN-MIB;
+
+
+--
+--  Module Identification
+--
+
+ntcRedundancy   MODULE-IDENTITY
+    LAST-UPDATED "201301081200Z"
+    ORGANIZATION "Newtec Cy"
+    CONTACT-INFO
+        "Newtec Cy
+         Postal: Newtec Cy
+                 Laarstraat 5
+                 B-9100 Sint-Niklaas
+                 Belgium
+
+                Tel: +32 3 780 65 00
+                Fax: +32 3 780 65 49
+                Web: www.newtec.be
+                E-mail: techsupport@newtec.be"
+    DESCRIPTION
+        "Newtec modular MIB containing definitions for redundancy functionality."
+
+    REVISION  "201301081200Z"
+    DESCRIPTION
+        "Release for MDM6000 and NOP1760 R1.0"
+    REVISION  "201206281200Z"
+    DESCRIPTION
+        "Release for M6100 R1.2"
+    ::= { ntcFunction  1800 }
+    
+
+--
+-- Top-Level Structure
+--
+
+-- ntcRedundancy content
+
+ntcRedunObjects                  OBJECT-IDENTITY
+    STATUS        current
+    DESCRIPTION   "Container holding ntcRedunObjects definitions."
+    ::= { ntcRedundancy 1 }
+    
+ntcRedunConformance              OBJECT-IDENTITY
+    STATUS        current
+    DESCRIPTION   "Conformance requirements."
+    ::= { ntcRedundancy 2 }
+    
+-- ntcRedunConformance content
+
+ntcRedunConfCompliance           OBJECT-IDENTITY
+    STATUS        current
+    DESCRIPTION   "Device compliance statements."
+    ::= { ntcRedunConformance 1 }
+    
+ntcRedunConfGroup                OBJECT-IDENTITY
+    STATUS        current
+    DESCRIPTION   "Groups used by device compliance statements."
+    ::= { ntcRedunConformance 2 }
+    
+
+--
+-- Managed Objects
+--
+
+ntcRedunEnable                   OBJECT-TYPE
+    SYNTAX      NtcEnable
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Enable or disable Device Redundancy."
+    DEFVAL { off }
+    ::= { ntcRedunObjects 1 }
+    
+ntcRedunInitialState             OBJECT-TYPE
+    SYNTAX      INTEGER { standby(0), active(1) }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "Initial Device Redundancy State when Device Redundancy is enabled. In Standby
+        state the modulator output will be disabled."
+    DEFVAL { standby }
+    ::= { ntcRedunObjects 2 }
+    
+ntcRedunOperationalState         OBJECT-TYPE
+    SYNTAX      INTEGER { active(0), standby(1), na(2) }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Displays the operational device redundancy state. It is only relevant when
+        device redundancy is enabled."
+    ::= { ntcRedunObjects 3 }
+    
+
+--
+--  Module Conformance
+--
+
+ntcRedunConfGrpV1Standard        OBJECT-GROUP
+    OBJECTS    {
+                   ntcRedunEnable,
+                   ntcRedunInitialState,
+                   ntcRedunOperationalState
+               }
+    STATUS      current
+    DESCRIPTION
+        "Managed objects that constitute version 1 of a system device with standard capabilities."
+    ::= { ntcRedunConfGroup 1}
+    
+ntcRedunConfCompV1Standard       MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "Compliance statement for Newtec device MIB implementations."
+    MODULE  -- this module
+    MANDATORY-GROUPS
+                  {
+                      ntcRedunConfGrpV1Standard
+                  }
+    ::= { ntcRedunConfCompliance  1 }
+    
+
+END
